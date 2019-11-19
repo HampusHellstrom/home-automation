@@ -4,19 +4,13 @@ import argparse
 import json
 from pprint import pprint
 from datetime import datetime as dt
-import cs
+import csv
 
 """
-curl --header "Content-type: application/json"
-     --request POST
-     --data '{"sensor":"sensor_1",
-         "measure":"temperature",
-         "value": 100,
-         "note": "outside"}'
-     http://localhost:8080
+curl --header "Content-type: application/json" --request POST --data '{"sensor":"sensor_1","measure":"temperature", "value": 100,"note": "outside"}' http://localhost:8080
 """
 
-CSV_FILE = "log.csv"
+CSV_FILE = "logs/log.csv"
 
 
 class RequestHandler(BaseHTTPRequestHandler):
