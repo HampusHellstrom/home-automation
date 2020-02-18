@@ -6,33 +6,26 @@
       "pins": [
         {
           "pin-number": 1,
-          "decoder": {
-            "function": "temp",
-            "config": {
-              "map-in": [0, 1023],
-              "map-out": [-20, 255]
-            }
+          "unit": "celsius",
+          "metric": "temperature",
+          "decoder-map": {
+            "input": [0, 1023],
+            "output": [-20, 120]
           }
         },
         {
           "pin-number": 2,
-          "decoder": {
-            "function": "temp",
-            "config": {
-              "map-in": [0, 1023],
-              "map-out": [-20, 255]
-            }
+          "unit": "relative humidity",
+          "metric": "humidity",
+          "decoder-map": {
+            "input": [0, 500, 1023],
+            "output": [0, 20, 100]
           }
         },
         {
           "pin-number": 3,
-          "decoder": {
-            "function": "temp",
-            "config": {
-              "map-in": [0, 1023],
-              "map-out": [-20, 255]
-            }
-          }
+          "unit": "realtive moisture",
+          "metric": "moisture"
         }
       ]
     }
