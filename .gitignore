@@ -1,3 +1,4 @@
 python-data-recorder/logs
 python-data-recorder/venv
 *.sublime*
+*.stackdump
