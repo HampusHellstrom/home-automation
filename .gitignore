@@ -1,5 +1,8 @@
 python-data-recorder/logs
 python-data-recorder/venv
+
 web-server/venv
+web-server/db.sqlite3
+
 *.sublime*
 *.stackdump

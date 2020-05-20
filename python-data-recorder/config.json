@@ -1,8 +1,26 @@
 {
-  "data-recorders": [
+  "location_name": "Bråvallagatn 3",
+  "devices": [
     {
-      "name": "Loving Room",
-      "address": "192.0.1.92:3030",
+      "name": "internal",
+      "connector": "raspberrypi",
+      "probes": [
+        {
+          "name": "CPU temp",
+          "unit": "Celsius",
+        }
+      ]
+    },
+    {
+      "name": "living-room",
+      "connector": "esp8266",
+      "probes": [
+        {
+          "name": "CPU temp",
+          "unit": "Celsius",
+          "parser": "thermometer.v1"
+        }
+      ]
     }
   ]
 }
