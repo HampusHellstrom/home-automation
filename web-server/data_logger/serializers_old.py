@@ -1,8 +1,9 @@
 from rest_framework import serializers, status
 from .models import (
     Measurement,
-    Sensor,
-    SensorGroup,
+    Probe,
+    Device,
+    Location,
 )
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
@@ -10,7 +11,6 @@ from datetime import datetime, timedelta
 from pprint import pprint
 import dateutil
 from django.core.exceptions import PermissionDenied
-
 
 
 class FilteredMeasurementSerializer(serializers.ListSerializer):
@@ -35,7 +35,6 @@ class FilteredMeasurementSerializer(serializers.ListSerializer):
         )
         return super(FilteredMeasurementSerializer, self).to_representation(data)
 
-
 class MeasurementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Measurement
@@ -45,54 +44,88 @@ class MeasurementSerializer(serializers.ModelSerializer):
             "value"
         )
 
-
-class SensorMeasurementSerializer(serializers.ModelSerializer):
+class ProbeMeasurementSerializer(serializers.ModelSerializer):
     measurements = MeasurementSerializer(many=True)
 
     class Meta:
-        model = Sensor
+        model = Probe
         fields = (
             "name",
-            "prop",
+            "unit",
             "measurements"
         )
 
-
-class SensorGroupMeasurementSerializer(serializers.ModelSerializer):
-    sensors = SensorMeasurementSerializer(many=True)
+class DeviceMeasurementSerializer(serializers.ModelSerializer):
+    probes = ProbeMeasurementSerializer(many=True)
 
     class Meta:
-        model = SensorGroup
+        model = Device
         fields = (
-            "id",
             "name",
-            "sensors"
+            "probes"
+        )
+
+class LocationMeasurementSerializer(serializers.ModelSerializer):
+    devices = DeviceMeasurementSerializer(many=True)
+
+    class Meta:
+        model = Location
+        fields = (
+            "name",
+            "devices"
         )
 
 
-class SensorSerializer(serializers.ModelSerializer):
-
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Sensor
+        model = Location
         fields = (
             "id",
             "name",
-            "description",
         )
 
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return Location.objects.create(user=user, **validated_data)
 
 
-class SensorGroupSerializer(serializers.ModelSerializer):
-    sensors = SensorSerializer(many=True)
-
+class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SensorGroup
+        model = Device
         fields = (
             "id",
+            "location",
             "name",
-            "description",
-            "sensors",
         )
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        location = Location.objects.get(id=validated_data["location"].id)
+
+        if user == location.user:
+            return Device.objects.create(**validated_data)
+        else:
+            raise PermissionDenied("You do not have the premission to create devices for this location")
+
+class ProbeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Probe
+        fields = (
+            "id",
+            "device",
+            "name",
+            "unit",
+        )
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        device = Device.objects.get(id=validated_data["device"].id)
+        location = Location.objects.get(id=device.id)
+
+        if user == location.user:
+            return Probe.objects.create(**validated_data)
+        else:
+            raise PermissionDenied("You do not have the premission to create probes for this device")
 
 
 class MeasurementSerializer(serializers.ModelSerializer):
@@ -100,16 +133,18 @@ class MeasurementSerializer(serializers.ModelSerializer):
         model = Measurement
         fields = (
             "id",
-            "sensor",
+            "probe",
             "value",
             "datetime",
         )
 
     def create(self, validated_data):
         user = self.context["request"].user
-        sensor = Sensor.objects.get(id=validated_data["sensor"].id)
+        probe = Probe.objects.get(id=validated_data["probe"].id)
+        device = Device.objects.get(id=probe.id)
+        location = Location.objects.get(id=device.id)
 
-        if user == sensor.user:
+        if user == location.user:
             return Measurement.objects.create(**validated_data)
         else:
             raise PermissionDenied("You do not have the premission to create measurements for this probe")

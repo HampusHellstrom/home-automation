@@ -1,8 +1,13 @@
 python-data-recorder/logs
 python-data-recorder/venv
 
+
+web-server/data_logger/__pycache__
+web-server/web_server/__pycache__
 web-server/venv
 web-server/db.sqlite3
 
+*__pycache__*
 *.sublime*
 *.stackdump
+*.backup

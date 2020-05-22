@@ -4,59 +4,35 @@ from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from .models import (
     Measurement,
-    Location,
-    Device,
-    Probe,
+    Sensor,
 )
 from .serializers import (
-    LocationMeasurementSerializer,
-    LocationSerializer,
-    DeviceSerializer,
-    ProbeSerializer,
+    SensorGroupMeasurementSerializer,
+    SensorSerializer,
     MeasurementSerializer,
+    SensorGroup,
 )
 
 
 # Create your views here.
 class UserMeasurementViewSet(viewsets.ModelViewSet):
-    serializer_class = LocationMeasurementSerializer
+    serializer_class = SensorGroupMeasurementSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        return Location.objects.filter(user=self.request.user)
+        return SensorGroup.objects.filter(user=self.request.user)
 
 
 # Create your views here.
-class LocationViewSet(viewsets.ModelViewSet):
-    serializer_class = LocationSerializer
+class SensorViewSet(viewsets.ModelViewSet):
+    serializer_class = SensorSerializer
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
     # queryset = Location.objects.all()
     def get_queryset(self):
-        return Location.objects.filter(user=self.request.user)
-
-# Create your views here.
-class DeviceViewSet(viewsets.ModelViewSet):
-    serializer_class = DeviceSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        locations = Location.objects.filter(user=self.request.user)
-        return Device.objects.filter(location__in=locations)
-
-# Create your views here.
-class ProbeViewSet(viewsets.ModelViewSet):
-    serializer_class = ProbeSerializer
-    authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
-
-    def get_queryset(self):
-        locations = Location.objects.filter(user=self.request.user)
-        devices = Device.objects.filter(location__in=locations)
-        return Probe.objects.filter(device__in=devices)
+        return Sensor.objects.filter(user=self.request.user)
 
 
 # Create your views here.
@@ -70,3 +46,14 @@ class MeasurementViewSet(viewsets.ModelViewSet):
         devices = Device.objects.filter(location__in=locations)
         probes = Probe.objects.filter(device__in=devices)
         return Measurement.objects.filter(probe__in=probes)
+
+
+class SensorGroupViewSet(viewsets.ModelViewSet):
+
+    serializer_class = SensorGroup
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return SensorGroup.objects.filter(user=self.request.user)
+

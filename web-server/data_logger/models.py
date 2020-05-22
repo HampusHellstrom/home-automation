@@ -1,58 +1,36 @@
 from django.db import models
 from django.contrib.auth.models import User
-from datetime.datetime import now
+from datetime import datetime
 
 # Create your models here.
 
-class Location(models.Model):
 
-    class Meta:
-        unique_together = (("user", "name"),)
-        index_together = (("user", "name"),)
 
-    def __str__(self):
-        return f"{self.user.username} - {self.name}"
+class Sensor(models.Model):
+    TEMPERATURE = 1
+    HUMIDITY = 2
+    BRIGHTNESS = 3
+    MOISTURE = 4
+    UNITS =(
+        (TEMPERATURE, "Temperature"),
+        (HUMIDITY, "Humidity"),
+        (BRIGHTNESS, "Brightness"),
+        (MOISTURE, "Moisture"),
+    )
 
     user = models.ForeignKey(User,
                              on_delete=models.CASCADE,
                              related_name="locations")
+    description = models.TextField(null=True, blank=True, max_length=500)
     name = models.CharField(max_length=32)
-
-
-class Device(models.Model):
-    location = models.ForeignKey(Location,
-                                 on_delete=models.CASCADE,
-                                 related_name="devices")
-    name = models.CharField(max_length=32)
-
-    class Meta:
-        unique_together = (("location", "name"),)
-        index_together = (("location", "name"),)
+    prop = models.IntegerField(choices = UNITS)
 
     def __str__(self):
-        return f"{self.location.name} - {self.name}"
-
-
-class Probe(models.Model):
-    device = models.ForeignKey(Device,
-                               on_delete=models.CASCADE,
-                               related_name="probes")
-    name = models.CharField(max_length=32)
-
-    class Units(models.IntegerChoices):
-        CESLIUS = 1
-        HUMIDITY = 2
-        LUMEN = 3
-        MOISTURE = 4
-
-    unit = models.IntegerField(choices=Units.choices)
-
-    def __str__(self):
-        return f"{self.device.location.name} - {self.device.name} - {self.name}"
+        return f"{self.id}. {self.name} - {self.UNITS[self.prop][1]} ({self.user.username})"
 
 
 class Measurement(models.Model):
-    probe = models.ForeignKey(Probe,
+    sensor = models.ForeignKey(Sensor,
                               on_delete=models.CASCADE,
                               related_name="measurements")
     datetime = models.DateTimeField(auto_now_add=True)
@@ -61,7 +39,26 @@ class Measurement(models.Model):
     def __str__(self):
         return f"{self.datetime}"
 
-    def save(self, *args, **kwargs):
-        if datetime is None:
-            datetime = now()
-        super(MyModel, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     print(dir(self))
+    #     if self.datetime is None:
+    #         datetime = datetime.now()
+    #     super(Measurement, self).save(*args, **kwargs)
+
+
+class SensorGroup(models.Model):
+    user = models.ForeignKey(User,
+                             on_delete=models.CASCADE,
+                             related_name="sensor_groups")
+    name = models.CharField(max_length=64)
+    description = models.TextField(null=True, blank=True, max_length=500)
+    sensors = models.ManyToManyField(Sensor)
+
+
+    class Meta:
+        unique_together = (("user", "name"),)
+        index_together = (("user", "name"),)
+
+    def __str__(self):
+        return f"{self.id}. {self.name} ({self.user.username})"
+

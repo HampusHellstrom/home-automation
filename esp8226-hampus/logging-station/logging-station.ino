@@ -20,7 +20,7 @@ const int ONE_SECOND = 1000;
 bool passive_mode = false;
 bool post_intervall_period = 15 * 60 * ONE_SECOND;
 
-int time_until_post = 0;
+int time_until_next_post = 0;
 
 
 
@@ -40,6 +40,7 @@ void setup() {
     Serial.println(WiFi.localIP());  //Print the local IP
     server.on("/get-data", get_data); //Associate the handler function to the path
     server.on("/set-pin-mode", set_pin_mode); //Associate the handler function to the path
+    server.on("/settings", edit_settings); //Associate the handler function to the path
     server.begin(); //Start the server
     Serial.println("Server listening");
 }
@@ -55,13 +56,13 @@ void activate_input(int pin) {
 
 
 void loop() {
-    if (!passive_mode && time_until_post <= 0) {
+    if (!passive_mode && time_until_next_post <= 0) {
         post_measurement();
     }
 
     server.handleClient(); //Handling of incoming requests
     delay(ONE_SECOND);
-    time_until_post -= ONE_SECOND;
+    time_until_next_post -= ONE_SECOND;
 }
 
 void print_request() {
@@ -161,11 +162,11 @@ void post_measurement() {
         Serial.print("  Response: ");
         Serial.println(httpCode);
         if (httpCode >= 200 && httpCode > 300) {
-            time_until_post = post_intervall_period;
+            time_until_next_post = post_intervall_period;
         } else if (httpCode >= 500) {
-            time_until_post = post_intervall_period;
+            time_until_next_post = post_intervall_period;
         } else {
-            time_until_post = post_intervall_period / 15;
+            time_until_next_post = post_intervall_period / 15;
         }
     }
 }
@@ -175,7 +176,7 @@ void post_measurement() {
 void edit_settings() {
     print_request();
 
-    if (server.method() == HTTP_PATCH) {
+    if (server.method() == HTTP_POST) {
         if (server.hasHeader("token") && server.header("token") == token) {
 
             if (server.hasHeader("mode")) {
