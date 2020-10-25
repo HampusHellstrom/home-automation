@@ -8,14 +8,14 @@ SENSOR = 8
 
 
 def main():
-    header = {
+    headers = {
         "Authorization": f"Token {TOKEN}",
     }
     payload = {
         "sensor": SENSOR,
         "value": get_cpu_temp(),
     }
-    requests.post(URL, header=header, json=payload)
+    requests.post(URL, headers=headers, json=payload)
 
 
 def get_cpu_temp():
