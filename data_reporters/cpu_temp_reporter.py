@@ -15,7 +15,8 @@ def main():
         "sensor": SENSOR,
         "value": get_cpu_temp(),
     }
-    requests.post(URL, headers=headers, json=payload)
+    res = requests.post(URL, headers=headers, json=payload)
+    print(res.json())
 
 
 def get_cpu_temp():
