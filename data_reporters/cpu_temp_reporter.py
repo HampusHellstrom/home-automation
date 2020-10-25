@@ -2,7 +2,7 @@ import subprocess
 import requests
 
 
-URL = "http://localhost:8000/data-logger/measurements/"
+URL = "http://192.168.1.200:3001/data-logger/measurements/"
 TOKEN = "adbea5f168f9bc36690608291d1c2f2eb7600e7d"
 SENSOR = 8
 
