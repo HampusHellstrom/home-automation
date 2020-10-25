@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from datetime import datetime, timedelta
 from pprint import pprint
-import dateutil
 from django.core.exceptions import PermissionDenied
 
 
@@ -20,12 +19,12 @@ class FilteredMeasurementSerializer(serializers.ListSerializer):
         query_params = self.context["request"].query_params
 
         if "to_date" in query_params:
-            to_date = dateutil.parser.parse(query_params["to_date"])
+            to_date = datetime.fromisoformat(query_params["to_date"])
         else:
             to_date = now
 
         if "from_date" in query_params:
-            from_date = dateutil.parser.parse(query_params["from_date"])
+            from_date = datetime.fromisoformat(query_params["from_date"])
         else:
             from_date = to_date - timedelta(days=7)
 
@@ -44,6 +43,12 @@ class MeasurementSerializer(serializers.ModelSerializer):
             "datetime",
             "value"
         )
+
+    def to_representation(self, data):
+        return {
+            "value": data.value,
+            "timestamp": data.datetime.timestamp()*1000,
+        }
 
 
 class SensorMeasurementSerializer(serializers.ModelSerializer):
@@ -80,6 +85,10 @@ class SensorSerializer(serializers.ModelSerializer):
             "description",
         )
 
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return Location.objects.create(user=user, **validated_data)
+
 
 
 class SensorGroupSerializer(serializers.ModelSerializer):
@@ -93,6 +102,11 @@ class SensorGroupSerializer(serializers.ModelSerializer):
             "description",
             "sensors",
         )
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        return Location.objects.create(user=user, **validated_data)
+
 
 
 class MeasurementSerializer(serializers.ModelSerializer):

@@ -7,15 +7,17 @@ from datetime import datetime
 
 
 class Sensor(models.Model):
-    TEMPERATURE = 1
-    HUMIDITY = 2
-    BRIGHTNESS = 3
-    MOISTURE = 4
+    TEMPERATURE = 0
+    HUMIDITY = 1
+    BRIGHTNESS = 2
+    MOISTURE = 3
+    RAIN = 4
     UNITS =(
         (TEMPERATURE, "Temperature"),
         (HUMIDITY, "Humidity"),
         (BRIGHTNESS, "Brightness"),
         (MOISTURE, "Moisture"),
+        (RAIN, "Rain"),
     )
 
     user = models.ForeignKey(User,

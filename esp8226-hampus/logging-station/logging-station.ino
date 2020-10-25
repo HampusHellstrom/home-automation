@@ -6,26 +6,59 @@ ESP8266WebServer server(80);
 // curl -X GET 192.168.1.9/get-data?token=secret
 // curl -X PATCH "192.168.1.9/set-pin-mode?pin=2&pinMode=INPUT&token=secret"
 
+// Wifi settings
 const char* wifi_ssid = "Schwifty";
 const char* wifi_password = "1415926535";
 const char* token = "secret";
 
 
+// Remote data
 const char* device_id = "";
 const char* remote_base_url = "";
 const char* remote_token = "Token <token>";
 
-const int ONE_SECOND = 1000;
 
+// Sending constant
+const int ONE_SECOND = 1000;
 bool passive_mode = false;
 bool post_intervall_period = 15 * 60 * ONE_SECOND;
-
 int time_until_next_post = 0;
+
+
+enum PinMode {
+    OFF,
+    INPUT,
+    OUTPUT,
+};
+
+struct Pin {
+    int local_id;
+    int remote_id;
+    enum PinMode mode;
+
+}
+
+Pin pins[] = {
+    Pin {0, 0, OFF},
+    Pin {1, 0, OFF},
+    Pin {2, 0, OFF},
+    Pin {3, 0, OFF},
+    Pin {4, 0, OFF},
+    Pin {5, 0, OFF},
+    Pin {9, 0, OFF},
+    Pin {10, 0, OFF},
+    Pin {12, 0, OFF},
+    Pin {13, 0, OFF},
+    Pin {14, 0, OFF},
+    Pin {15, 0, OFF},
+    Pin {16, 0, OFF},
+};
 
 
 
 const int NUMBER_OF_PINS = 13;
-const int my_pins[] = {16, 5, 4, 0, 2, 14, 12, 13, 15, 3, 1, 10, 9};
+int my_pins[] = {16, 5, 4, 0, 2, 14, 12, 13, 15, 3, 1, 10, 9};
+int pin_remote_id = {}
 bool input_pins[NUMBER_OF_PINS];
 bool output_pins[NUMBER_OF_PINS];
 
@@ -131,6 +164,7 @@ char current_pin_values() {
             pin_values[pin] = -1;
         }
     }
+
     sprintf(buffer, "[%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d]", pin_values[0],pin_values[1],pin_values[2],pin_values[3],pin_values[4],pin_values[5],pin_values[6],pin_values[7],pin_values[8],pin_values[9],pin_values[10],pin_values[11],pin_values[12]);
     return buffer
 

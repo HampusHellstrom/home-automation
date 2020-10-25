@@ -1,0 +1,6 @@
+while :; do
+    inotifywait -e modify -r .
+    clear
+    elm make src/Main.elm
+    date
+done
