@@ -7,6 +7,7 @@ web-server/web_server/__pycache__
 web-server/venv
 web-server/db.sqlite3
 
+*.log
 *__pycache__*
 *.sublime*
 *.stackdump
