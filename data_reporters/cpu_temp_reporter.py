@@ -4,7 +4,7 @@ import requests
 
 URL = "http://localhost:8000/data-logger/measurements/"
 TOKEN = "adbea5f168f9bc36690608291d1c2f2eb7600e7d"
-SENSOR = 1
+SENSOR = 8
 
 
 def main():
