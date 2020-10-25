@@ -11,3 +11,4 @@ web-server/db.sqlite3
 *.sublime*
 *.stackdump
 *.backup
+*.sqlite3

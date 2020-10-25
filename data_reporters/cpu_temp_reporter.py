@@ -20,9 +20,13 @@ def main():
 
 def get_cpu_temp():
     command = r"vcgencmd measure_temp | egrep -o '[0-9]*\.[0-9]*'"
-    temp_reading = subprocess.run(command, shell=True, check=True)
-    return int(temp_reading)
+    temp_reading = subprocess.run(command, stdout=subprocess.PIPE, shell=True)
+    return float(temp_reading.stdout.decode("utf-8"))
 
 
 if __name__ == "__main__":
     main()
+
+
+
+
