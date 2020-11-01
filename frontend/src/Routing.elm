@@ -6,18 +6,17 @@ import Url.Parser.Query as Query
 
 
 type Route
-    = Home
-    | Sensor DateQuery
-    | SensorGroup DateQuery
-    | View
+    = Login
+    | Home
 
 
 routeParser : Parser (Route -> a) a
 routeParser =
     UP.oneOf
-        [ map SensorGroup (s "login" </> int <?> Query.string "dateFrom" <?> Query.string "dateTo")
-        , map Sensor (s "sensor" </> int "item_id" <?> queryParser)
-        , map View (s "view")
+        [ map Login (s "login")
+
+        --, map Sensor (s "sensor" </> int "item_id" <?> queryParser)
+        --, map View (s "view")
         ]
 
 
@@ -37,6 +36,7 @@ type alias DateQuery =
     }
 
 
-queryParser : Parser DateQuery
-queryParser =
-    Query.map2 DateQuery (string "dateFrom") (int "dateTo")
+
+--queryParser : Query.Parser DateQuery
+--queryParser =
+--    Query.map2 DateQuery (string "dateFrom") (int "dateTo")
