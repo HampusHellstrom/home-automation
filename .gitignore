@@ -1,6 +1,7 @@
 python-data-recorder/logs
 python-data-recorder/venv
 
+frontend/elm-stuff
 
 web-server/data_logger/__pycache__
 web-server/web_server/__pycache__
