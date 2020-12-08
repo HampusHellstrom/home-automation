@@ -9,7 +9,7 @@ venv: requirements.txt
 
 runserver: venv
 	(. venv/bin/activate && \
-	python manage.py runserver 192.168.1.200:3001)
+	python manage.py runserver 192.168.50.163:3001)
 
 
 clean:

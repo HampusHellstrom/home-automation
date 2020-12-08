@@ -8,7 +8,15 @@ import Html.Events exposing (onClick, onInput, onSubmit)
 type alias Model =
     { username : String
     , password : String
+    , state : LoginState
     }
+
+
+type LoginState
+    = NotLoggedIn
+    | Pending
+    | Failed
+    | Successful
 
 
 type Msg
@@ -21,6 +29,7 @@ type Msg
 init =
     ( { username = ""
       , password = ""
+      , state = NotLoggedIn
       }
     , Cmd.none
     )
@@ -33,8 +42,18 @@ view model =
         [ viewInputField "username" "Username" model.username GotUsername
         , viewInputField "password" "Password" model.password GotPassword
         , button [ onClick SubmittedCredentials ] [ text "Login" ]
+        , showState model.state
         ]
     }
+
+
+showState state =
+    case state of
+        Pending ->
+            text "login pending"
+
+        _ ->
+            text ""
 
 
 viewInputField : String -> String -> String -> (String -> Msg) -> Html Msg
@@ -52,7 +71,7 @@ update msg model =
             ( { model | username = str }, Cmd.none )
 
         SubmittedCredentials ->
-            ( model, Cmd.none )
+            ( { model | state = Pending }, Cmd.none )
 
         SuccessfulLogin ->
             ( model, Cmd.none )

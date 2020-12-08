@@ -34,7 +34,9 @@ main =
 
 type alias Model =
     { page : CurrentPage
+    , user : Maybe User
     , key : Nav.Key
+    , flags : ()
     }
 
 
@@ -45,12 +47,17 @@ type CurrentPage
 
 type alias User =
     { token : String
+    , name : String
     }
 
 
 init : () -> Url.Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( { page = HomePage Home.NothingHappend, key = key }
+    ( { page = HomePage Home.NothingHappend
+      , key = key
+      , user = Nothing
+      , flags = flags
+      }
     , Cmd.none
     )
 
